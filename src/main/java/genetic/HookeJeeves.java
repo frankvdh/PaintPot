@@ -3,7 +3,6 @@
  */
 package genetic;
 
-import paintpot.Colour;
 import paintpot.Paint;
 
 /**
@@ -16,16 +15,16 @@ public class HookeJeeves {
             final int maxIter,
             final double startStep,
             final double endStep,
-            final Colour target) {
+            final Genetic genetic) {
         var currentStep = startStep;
         var parValue = par.getValue();
         boolean changed = false;
         for (var i = 0; i < maxIter; i++) {
 //            System.out.printf("%f %f\n", par.value, currentStep);
-            for (var j = 0; j < Paint.primary.length; j++) {
+            for (var j = 0; j < Paint.palette.length; j++) {
                 var test = new Individual(par);
                 test.mutate(j, -currentStep);
-                var testValue = test.eval(target);
+                var testValue = genetic.eval(test);
                 if (testValue < parValue) {
                     parValue = testValue;
                     par = test;
@@ -34,7 +33,7 @@ public class HookeJeeves {
                 }
                 test = new Individual(par);
                 test.mutate(j, currentStep);
-                testValue = test.eval(target);
+                testValue = genetic.eval(test);
                 if (testValue < parValue) {
                     parValue = testValue;
                     par = test;

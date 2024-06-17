@@ -3,16 +3,15 @@
  */
 package genetic;
 
-import paintpot.Colour;
 import paintpot.Paint;
 
 /**
  *
  * @author frank
  */
-public class Individual implements Comparable<Individual>, GeneticInterface<Paint> {
+public class Individual implements Comparable<Individual> {
 
-    private double value;
+    double value;
     private int numBreeds;
     private Paint data;
 
@@ -29,17 +28,6 @@ public class Individual implements Comparable<Individual>, GeneticInterface<Pain
         this(new Paint(p.getData()));
     }
 
-    @Override
-    final public double eval(Colour target) {
-        value = getData().eval(target);
-        return getValue();
-    }
-
-    @Override
-    public void mutateRandom(double min, double max) {
-        mutate((int) (Math.random() * getData().proportion.length), getRandomBetween(min, max));
-    }
-
     public void mutate(int index, double value) {
         value += getData().proportion[index];
         data.proportion[index] = value < 0 ? 0 : value;
@@ -54,20 +42,7 @@ public class Individual implements Comparable<Individual>, GeneticInterface<Pain
 
     @Override
     public String toString() {
-        return String.format("%.0f%%, %s", (1 - getValue()) * 100, getData().toString());
-    }
-
-    @Override
-    public Individual combine(Individual mate, double ratio, boolean doMutate) {
-        var child = new Individual(new Paint(getData(), mate.getData(), ratio));
-        if (doMutate) {
-            child.mutateRandom(-1.0, 1.0);
-        }
-        return child;
-    }
-
-    public static double getRandomBetween(final double min, final double max) {
-        return min + (Math.random() * (max - min));
+        return String.format("%.2f, %s", getValue(), getData().toString());
     }
 
     /**

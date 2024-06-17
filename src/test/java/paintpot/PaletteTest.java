@@ -87,7 +87,7 @@ public class PaletteTest {
     public void testMix() {
         System.out.println("mix");
         Paint instance = new Paint(4);
-        Color expResult = Paint.primary[4];
+        Color expResult = Paint.palette[4];
         Color result = instance.mix();
         assertEquals(expResult, result);
     }

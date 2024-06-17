@@ -3,20 +3,17 @@
  */
 package genetic;
 
-import paintpot.Colour;
-
 /**
  *
  * @author frank
- * @param <T>
- */
-public interface GeneticInterface<T> {
+  */
+public interface GeneticInterface {
 
-    Individual combine(Individual other, double ratio, boolean doMutate);
+    Individual combine(Individual i, Individual other, double ratio, boolean doMutate);
 
-    void mutateRandom(double min, double max);
+    void mutateRandom(Individual i, double min, double max);
 
-    double eval(Colour target);
+    double eval(Individual i);
 
     @Override
     String toString();

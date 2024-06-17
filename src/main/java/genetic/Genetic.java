@@ -13,22 +13,15 @@ import paintpot.Paint;
  *
  * @author frank
  */
-public class Genetic {
+public class Genetic implements GeneticInterface {
 
-    private static final double EPSILON = 0.000001;
+    private static final double EPSILON = 0.5;
     private double mutRate;
     private final double initMutRate;
     private final ArrayList<Individual> generation;
     private final int popSize;
     private final int numBreed;
     private final Colour target;
-// 9bb6eb
-    // 10.74 d0c4c4
-    // 10.74 a0b8cb
-    // 10.89 9bb6cb
-    //       9abdc9
-    //       99bcc8
-    // 24.79 9bbfcb
 
     public Genetic(Colour targetValue, double mutRate, double breedFraction, int maxPopSize) {
         this.initMutRate = mutRate;
@@ -38,7 +31,7 @@ public class Genetic {
         generation = new ArrayList<>();
         for (var i = 0; i < maxPopSize; i++) {
             var p = new Individual(Paint.random());
-            p.eval(target);
+            eval(p);
             generation.add(p);
 
         }
@@ -71,8 +64,8 @@ public class Genetic {
                     mutRate *= 2;
                 }
                 var p = generation.getFirst();
-                p.mutateRandom(-1.0, 2.0);
-                p.eval(target);
+                mutateRandom(p, -1.0, 2.0);
+                eval(p);
                 counter = 20;
 
             } else {
@@ -111,10 +104,10 @@ public class Genetic {
             var b2 = getRandom(breedProb);
             if (b1 == b2) {
                 b2 = new Individual(Paint.random());
-                b2.eval(target);
+                eval(b2);
             }
-            var child = b1.combine(b2, b2.getValue() / b1.getValue(), Math.random() < mutRate);
-            child.eval(target);
+            var child = combine(b1, b2, b2.getValue() / b1.getValue(), Math.random() < mutRate);
+            eval(child);
             generation.add(child);
 //        System.out.printf("\nAdd %2d: %s", generation.size(), child);
         }
@@ -127,4 +120,30 @@ public class Genetic {
         return breedProb.ceilingEntry(r).getValue();
 
     }
+    
+    @Override
+     final public double eval(Individual i) {
+        var value = i.getData().eval(target);
+        i.value = value;
+        return value;
+    }
+
+    @Override
+    public Individual combine(Individual i, Individual mate, double ratio, boolean doMutate) {
+        var child = new Individual(new Paint(i.getData(), mate.getData(), ratio));
+        if (doMutate) {
+            mutateRandom(child, -1.0, 1.0);
+        }
+        return child;
+    }
+
+    @Override
+    public void mutateRandom(Individual i, double min, double max) {
+        i.mutate((int) (Math.random() * Paint.paletteLength), getRandomBetween(min, max));
+    }
+
+    private static double getRandomBetween(final double min, final double max) {
+        return min + (Math.random() * (max - min));
+    }
+
 }
